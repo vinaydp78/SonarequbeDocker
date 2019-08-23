@@ -1,0 +1,55 @@
+The server is started this way:
+
+docker run -d --name sonarqube -p 9000:9000 sonarqube
+
+
+Now, access your sonarqube in your browser by typing your IP by following way
+http://192.168.9.190:9000
+
+If you wanted to access sonarqube in domain name e.g "  http://alohadevops/sonarqube " then we have to do following chnages
+
+" sudo docker run -d --name sonarqube -p 9000:9000 sonarqube " > this command will help you to create container.
+
+
+" sudo docker exec -u 0 -it 910f853736d2 bash "> by this command you can login in docker by root.
+
+then you have edit vim  /conf/sonarproperties
+
+"sonar.web.context: /sonarqube"
+
+for proxy nginx you have add following lines in virtual host :
+
+
+
+location /sonarqube {
+  proxy_pass http://localhost:9000;
+
+  # set header
+  proxy_set_header        Host $host;
+  proxy_set_header        X-Real-IP $remote_addr;
+  proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_connect_timeout   150;
+  proxy_send_timeout      100;
+  proxy_read_timeout      100;
+  proxy_buffers           4 32k;
+  client_max_body_size    8m;
+  client_body_buffer_size 128k;
+
+   proxy_redirect http://localhost:9000 http://alohadevops/sonarqube;
+}
+
+- After that you have restart Docker conatiner and Nginx 
+
+- And check your browser by using  yourdomain name 
+
+e.g http://alohadevops/sonarqube
+
+
+
+ 
+
+
+
+
+
+
